@@ -68,20 +68,20 @@ def account_view(request: Request):
             """
             if "username" not in request.data:
                 return BadRequestError()
-    
+
             application = db.query(UserApplication).filter(UserApplication.username == request.data["username"] and UserApplication.node_adr == request.sender).first()
             if not application:
                 return NotFoundError()
             if not application.approved:
                 return Response("Wait...", 202)
-    
+
             new_user = User(username=application.username, role_id=1)
             SessionLocal.add(new_user)
-    
+
             for application in db.query(UserApplication).filter(UserApplication.username == request.data["username"]):
                 SessionLocal.remove(application)
             SessionLocal.commit()
-    
+
             return 200, new_user.to_json()
             """
         else:
@@ -155,15 +155,16 @@ def payment_view(request: Request):
 
     if request.method == "COMMIT":
         try:
-            if not isinstance(request.data, dict) or "secret_key" not in request:
+            print(request.data)
+            if not isinstance(request.data, dict) or "secret_key" not in request.data:
                 return BadRequestError()
 
             user = db.query(User).filter(User.secret_key == request.data["secret_key"]).first()
             if user is None:
                 return NotFoundError()
 
-            if "transactions" in request:
-                for transaction_id in request["transactions"]:
+            if "transactions" in request.data:
+                for transaction_id in request.data["transactions"]:
                     if not isinstance(transaction_id, int):
                         continue
                     transaction = db.query(Transaction).filter(Transaction.id == transaction_id).first()
@@ -172,8 +173,8 @@ def payment_view(request: Request):
 
                     transaction.accepted = True
 
-            if "subscriptions" in request:
-                for subscription_id in request["subscriptions"]:
+            if "subscriptions" in request.data:
+                for subscription_id in request.data["subscriptions"]:
                     if not isinstance(subscription_id, int):
                         continue
                     subscription = db.query(Subscription).filter(Subscription.id == subscription_id).first()
@@ -182,6 +183,7 @@ def payment_view(request: Request):
 
                     subscription.accepted = True
 
+            db.commit()
         except Exception as e:
             db.rollback()
         finally:
@@ -195,8 +197,10 @@ def payment_view(request: Request):
             if user is None:
                 return NotFoundError()
 
-            transactions = db.query(Transaction).filter(Transaction.user_id == user.id and not Transaction.accepted).all()
-            subscriptions = db.query(Subscription).filter(Subscription.user_id == user.id and not Subscription.accepted).all()
+            transactions = db.query(Transaction).filter(
+                Transaction.user_id == user.id and not Transaction.accepted).all()
+            subscriptions = db.query(Subscription).filter(
+                Subscription.user_id == user.id and not Subscription.accepted).all()
 
             return JSONResponse({"balance": user.grubles, "transactions": transactions, "subscriptions": subscriptions})
         except Exception as e:
@@ -233,8 +237,10 @@ def transfer_view(request: Request):
 
         time_stamp = get_time_stamp()
 
-        transaction1 = Transaction(text=f"Перевод на счёт {user2.username}", amount=-amount, date=time_stamp, user_id=user1.id)
-        transaction2 = Transaction(text=f"Получено от {user1.username}", amount=amount, date=time_stamp, user_id=user2.id)
+        transaction1 = Transaction(text=f"Перевод на счёт {user2.username}", amount=-amount, date=time_stamp,
+                                   user_id=user1.id)
+        transaction2 = Transaction(text=f"Получено от {user1.username}", amount=amount, date=time_stamp,
+                                   user_id=user2.id)
         db.add(transaction1)
         db.add(transaction2)
 
@@ -243,7 +249,8 @@ def transfer_view(request: Request):
 
         db.commit()
 
-        return JSONResponse({"balance": float(user1.grubles), "transactions": [transaction1.to_json()]})#TextResponse("OK")
+        return JSONResponse(
+            {"balance": float(user1.grubles), "transactions": [transaction1.to_json()]})  # TextResponse("OK")
     except Exception as e:
         db.rollback()
         print(e)
