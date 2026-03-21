@@ -28,7 +28,7 @@
 ### 1. Клонирование репозитория
 
 ```bash
-git clone [https://github.com/flahhh/zatomis](https://github.com/Flahhhh/zatomis)
+git clone https://github.com/Flahhhh/zatomis
 cd zatomis
 ```
 
