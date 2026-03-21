@@ -1,4 +1,3 @@
-```markdown
 # Zatomis
 
 ![Python Version](https://img.shields.io/badge/Python-%3E%3D3.8-blue)
@@ -42,7 +41,6 @@ cd zatomis
 **Создание среды:**
 ```bash
 python -m venv venv
-```
 
 **Активация среды:**
 - **Windows:**
