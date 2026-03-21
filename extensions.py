@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.pool import QueuePool
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = 'mysql+pymysql://flah:KffGj35))@localhost/services?unix_socket=/run/mysqld/mysqld.sock'
+DATABASE_URL = 'mysql+pymysql://************@localhost/services?unix_socket=/run/mysqld/mysqld.sock'
 
 engine = create_engine(
     DATABASE_URL,
