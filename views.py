@@ -155,7 +155,6 @@ def payment_view(request: Request):
 
     if request.method == "COMMIT":
         try:
-            print(request.data)
             if not isinstance(request.data, dict) or "secret_key" not in request.data:
                 return BadRequestError()
 
