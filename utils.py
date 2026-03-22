@@ -1,4 +1,5 @@
 import secrets
+import time
 from datetime import datetime
 
 from extensions import SessionLocal
@@ -25,5 +26,4 @@ def is_float(s: str):
 
 
 def get_time_stamp():
-    dt_obj = datetime(2026, 3, 20)
-    return int(dt_obj.timestamp() * 1000)
+    return int(time.time() * 1000)
