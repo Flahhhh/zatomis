@@ -3,7 +3,7 @@ from datetime import datetime
 from _decimal import Decimal
 
 from zatomis import Request, Response, JSONResponse, TextResponse, MethodNotAllowedError, NotFoundError, \
-    BadRequestError, FuckYouResponse
+    BadRequestError, NopeResponse
 
 from models import User, UserApplication, Log, Transaction, Subscription, TransactionStatus
 from utils import get_db, generate_secret_key, is_float, get_time_stamp
@@ -20,6 +20,7 @@ def index_view(request: Request):
         db.commit()
     except Exception as e:
         db.rollback()
+        print(e)
         return InternalError()
     finally:
         db.close()
@@ -27,7 +28,7 @@ def index_view(request: Request):
 
 
 def test_view(request: Request):
-    return FuckYouResponse()
+    return NopeResponse()
 
 
 def account_view(request: Request):
@@ -88,6 +89,7 @@ def account_view(request: Request):
             return MethodNotAllowedError()
     except Exception as e:
         db.rollback()
+        print(e)
         return InternalError()
     finally:
         db.close()

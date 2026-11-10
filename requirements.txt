@@ -1,3 +1,4 @@
 meshtastic==2.7.7
 sqlalchemy
+sqlalchemy-utils
 pymysql

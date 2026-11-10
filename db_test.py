@@ -33,10 +33,10 @@ print([(account.id, account.name) for account in db.query(AccountStatus).all()])
 print([(user.id, user.username, user.account_status_id) for user in db.query(User).all()])
 print([(application.id, application.username, application.user_id) for application in db.query(UserApplication).all()])
 
-"""
+
 for user in db.query(User).all():
     user.account_status_id = 2
 
 db.commit()
-"""
+
 db.close()

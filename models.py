@@ -44,6 +44,9 @@ class Role(Base):
     def __repr__(self):
         return self.name
 
+    def get_permissions(self):
+        return []
+
 
 class AccountStatus(Base):
     __tablename__ = "account_status"
@@ -80,12 +83,18 @@ class User(Base):
             "user_id": self.id,
             "username": self.username,
             "grubles": float(self.grubles),
-            "name": self.name,
-            "second_name": self.second_name,
-            "last_name": self.last_name,
-            "role": self.role.name,
-            "permissions": self.get_permissions(),
-            "status": self.account_status.name
+            "status": self.account_status.name,
+            "profile_data": {
+                "name": self.name,
+                "second_name": self.second_name,
+                "last_name": self.last_name,
+                "role": {
+                    "id": self.role.id,
+                    "name": self.role.name,
+                    "permissions": self.role.get_permissions()
+                },
+                "permissions": self.get_permissions(),
+            }
         }
 
         if is_secret_key:
@@ -143,7 +152,7 @@ class Subscription(Base):
 class Log(Base):
     __tablename__ = "log"
 
-    id = Column(BigInteger, primary_key=True)
+    id = Column(Integer, primary_key=True)
     date = Column(Date, default=func.current_date())
     time = Column(Time, default=func.current_time())
     text = Column(String(255))
@@ -192,6 +201,3 @@ class UserApplication(Base):
 
     def __repr__(self):
         return f"application_{self.id}"
-
-
-Base.metadata.create_all(engine)

@@ -44,7 +44,7 @@ class BadRequestError(BasicResponse):
         super().__init__(data, status)
 
 
-class FuckYouResponse(BasicResponse):
+class NopeResponse(BasicResponse):
     def __init__(self, data: str = "Fuck You", status: int = 488):
         super().__init__(data, status)
 
